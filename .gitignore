@@ -1,0 +1,13 @@
+in
+out
+url
+config
+system
+vendor
+system.img
+vendor.img
+*.zip
+*.new.dat
+*.new.dat.br
+*.transfer.list
+*.patch.dat
