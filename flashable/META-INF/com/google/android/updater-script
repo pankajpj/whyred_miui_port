@@ -9,6 +9,6 @@ block_image_update("/dev/block/bootdevice/by-name/vendor", package_extract_file(
   abort("E2001: Failed to update vendor image.");
 show_progress(0.020000, 10);
 show_progress(0.050000, 5);
-#package_extract_file("boot.img", "/dev/block/bootdevice/by-name/boot");
+package_extract_file("boot.img", "/dev/block/bootdevice/by-name/boot");
 show_progress(0.200000, 10);
 set_progress(1.000000);
