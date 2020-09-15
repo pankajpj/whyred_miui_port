@@ -116,8 +116,8 @@ bytesToHuman() {
 # mk img
 vdir=$LOCALDIR/vendor
 sdir=$LOCALDIR/system
-ssize=`du -sk $sdir | awk '{$1*=1024;$1=int($1*1.05);printf $1}'`
-vsize=`du -sk $vdir | awk '{$1*=1024;$1=int($1*1.05);printf $1}'`
+ssize=3221225472
+vsize=2147483648
 sout=$OUTDIR/system.img
 vout=$OUTDIR/vendor.img
 vfsconfig=$LOCALDIR/config/vendor_fs_config
