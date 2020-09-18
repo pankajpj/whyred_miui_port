@@ -9,7 +9,6 @@ install:
 - sudo apt update && sudo apt install aria2 brotli
 - pip install -r requirements.txt > /dev/null
 script:
-- python3 eu.py
 - sudo bash port
 env:
   global:
@@ -21,9 +20,9 @@ deploy:
   api_key:
     secure: KQh7OQrT0/5d/u40pgokJVQ5ZTTTF7IgQE7mR+lyIVTyQ39qpfug4l0kOLEajILOIi493DQ1ZahGQzfI3ZWHmH41h8YWClWZLiHluBp7oCn5ojhYWue2P7jXLX2lmgWND0DProIGlPB4MaPxEjLcbuR3JeERGtCv5/nluKHo3ZVUmSbj2qMeAzDmKXzFFp9ca2FRx7su3pHy68LL4KMszskI/eOw6kLfxK25tx+CcxSSddBMO6ygabzgKcWn4+ZBnozvI0NbO0cDXfip5m0J26iRz5heIkHLgDSOQiYtQST1LDKIoEMu/oz3byJE5sbtS3xCW2WRxzPkwQ7iiAJPB6qoGm5Ktt3cD6uLk0SngU9K1UqCMTrmRHnUHsZD5Vp3UbpMEIqm7lksTllu48rcvdGu2oQk5yC+BZwjfPBh2wcIg0iJ5AkrfVonv7ohuPjN0elgto2R+C00zndDmAuTh5XbjumJC9GrR7dsGr8VX0QjxHrDmjySQkVBAgBavbJziX3p0LjAzLJtQgZjQimwwziyNWw0yceMtxyDIiBDAQs2euVszVqna5muENEXQwWKhz6dARwKIGDtHu66pKtJGPC51h26rxxGIkd/4maSvILjIxhXlMD57agC9N3Yk3Rk8UyON35nNgnl43WE4PVxA7TvvN8ToIAFDsaXiFMDKrA=
   file_glob: true
-  file: xiaomi.eu_multi_*.zip
+  file: MIUIPLUS*.zip
   on:
     repo: shekhawat2/whyred_miui_port
-    branch: eu
+    branch: plus
   skip_cleanup: 'true'
   draft: true

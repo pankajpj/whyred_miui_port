@@ -6,13 +6,13 @@ SDAT2IMG=$TOOLS/sdat2img.py
 IMG2SDAT=$TOOLS/img2sdat.py
 IMGEXTRACT=$TOOLS/imgextractor.py
 MKUSERIMG=$TOOLS/mkuserimg_mke2fs.sh
-URL=$(cat url)
+URL=https://mde1.androidfilehost.com/dl/r0S7PQLKOA_Pf-aSwJZN8Q/1600585537/8889791610682940836/MIUIPLUS.LAVENDER.20.9.17.A10.M12.zip
 OUTDIR=$LOCALDIR/out
 INDIR=$LOCALDIR/in
 WORKDIR=$LOCALDIR/work
 date=`date +%Y%m%d`
-ZIPNAME=$(cat url | cut -d / -f 10)
-NEWZIP=$(sed "s/v12-10/$date-v12-10/g" <<< $(echo $(sed 's/HMNote7/HMNote5Pro/g' <<< $ZIPNAME)))
+ZIPNAME=MIUIPLUS.LAVENDER.20.9.17.A10.M12.zip
+NEWZIP=$(sed "s/M12/M12-$date/g" <<< $(echo $(sed 's/LAVENDER/WHYRED/g' <<< $ZIPNAME)))
 COMMITHASH=$(git log -1 --pretty=%H)
 mkdir -p $WORKDIR
 mkdir -p $INDIR
@@ -22,14 +22,14 @@ mkdir -p $OUTDIR
 rm -rf $LOCALDIR/flashable/system.*
 rm -rf $LOCALDIR/flashable/vendor.*
 
-OLDZIPNAME=$(git describe)
-EUDATE=$(echo $ZIPNAME | cut -d _ -f 4)
-OLDEUDATE=$(echo $OLDZIPNAME | cut -d _ -f 4)
+#OLDZIPNAME=$(git describe)
+#EUDATE=$(echo $ZIPNAME | cut -d _ -f 4)
+#OLDEUDATE=$(echo $OLDZIPNAME | cut -d _ -f 4)
 
-if [[ $(git cat-file -p $OLDZIPNAME | tail -n +6) == $COMMITHASH && $EUDATE == $OLDEUDATE ]]; then
-    echo "$ZIPNAME already done!"
-    exit 0
-fi
+#if [[ $(git cat-file -p $OLDZIPNAME | tail -n +6) == $COMMITHASH && $EUDATE == $OLDEUDATE ]]; then
+#    echo "$ZIPNAME already done!"
+#    exit 0
+#fi
 
 # Download and Unzip
 echo "Downloading $ZIPNAME"
@@ -52,6 +52,9 @@ rm $LOCALDIR/vendor/etc/init/android.hardware.gatekeeper@1.0-service-qti.rc
 rm $LOCALDIR/vendor/etc/init/android.hardware.keymaster@4.0-service-qti.rc
 rm $LOCALDIR/system/system/product/priv-app/GmsCore/GmsCore.apk
 rm -rf $LOCALDIR/system/system/priv-app/Updater
+rm -rf $LOCALDIR/system/system/priv-app/Browser
+rm -rf $LOCALDIR/system/system/app/Email
+rm -rf $LOCALDIR/system/system/media/bootanimation.zip
 
 rsync -ra $LOCALDIR/audio/vendor/ $LOCALDIR/vendor
 rsync -ra $LOCALDIR/camera/vendor/ $LOCALDIR/vendor
