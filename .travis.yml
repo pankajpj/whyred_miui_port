@@ -26,3 +26,4 @@ deploy:
     repo: shekhawat2/whyred_miui_port
     branch: eu
   skip_cleanup: 'true'
+  draft: true
