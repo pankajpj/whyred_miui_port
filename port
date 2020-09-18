@@ -152,14 +152,14 @@ mk_zip() {
     rm vendor.new.dat || exit 1
 
     rm -rf ../$NEWZIP
-    zip -rv9 ../$NEWZIP * > /dev/null
+    zip -rv9 ../$NEWZIP *
     cd ..
 }
 
 mk_zip
 rm -rf $OUTDIR
 
-git remote add up https://${GH_TOKEN}@github.com/Shekhawat2/whyred_miui_port
+git remote add up https://${GH_TOKEN}@github.com/Shekhawat2/whyred_miui_port.git
 git commit --allow-empty $NEWZIP
 git tag $NEWZIP -m $COMMITHASH
 git push up --tags
