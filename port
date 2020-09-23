@@ -119,10 +119,13 @@ bytesToHuman() {
 }
 
 # mk img
+mk_img() {
 vdir=$LOCALDIR/vendor
 sdir=$LOCALDIR/system
 ssize=3221225472
 vsize=2147483648
+pvsize=`du -sk $vdir | awk '{$1*=1024;$1=int($1*1.05);printf $1}'`
+pssize=`du -sk $sdir | awk '{$1*=1024;$1=int($1*1.05);printf $1}'`
 sout=$OUTDIR/system.img
 vout=$OUTDIR/vendor.img
 vfsconfig=$LOCALDIR/config/vendor_fs_config
@@ -132,15 +135,16 @@ sfcontexts=$LOCALDIR/config/system_file_contexts
 
 echo "Creating system.img"
 $MKUSERIMG -s "$sdir" "$sout" ext4 system $ssize -C $sfsconfig $sfcontexts -T 0  -L system > /dev/null
-echo "system.img size: $(bytesToHuman $ssize)"
+echo "system.img size: $(bytesToHuman $pssize)"
 
 echo "Creating vendor.img"
 $MKUSERIMG -s "$vdir" "$vout" ext4 vendor $vsize -C $vfsconfig $vfcontexts -T 0  -L vendor > /dev/null
-echo "vendor.img size: $(bytesToHuman $vsize)"
+echo "vendor.img size: $(bytesToHuman $pvsize)"
 
 rm -rf $LOCALDIR/config
 rm -rf $LOCALDIR/system
 rm -rf $LOCALDIR/vendor
+}
 
 mk_zip() {
     echo "Creating $NEWZIP"
@@ -157,14 +161,48 @@ mk_zip() {
     rm vendor.new.dat || exit 1
 
     rm -rf ../$NEWZIP
-    zip -rv9 ../$NEWZIP * > /dev/null
+    zip -rv9 ../$NEWZIP *
     cd ..
 }
 
+urlencode() {
+    echo "$*" | sed 's:%:%25:g;s: :%20:g;s:<:%3C:g;s:>:%3E:g;s:#:%23:g;s:{:%7B:g;s:}:%7D:g;s:|:%7C:g;s:\\:%5C:g;s:\^:%5E:g;s:~:%7E:g;s:\[:%5B:g;s:\]:%5D:g;s:`:%60:g;s:;:%3B:g;s:/:%2F:g;s:?:%3F:g;s^:^%3A^g;s:@:%40:g;s:=:%3D:g;s:&:%26:g;s:\$:%24:g;s:\!:%21:g;s:\*:%2A:g'
+}
+
+tg_send() {
+    if [[ -z ${BOT_TOKEN} ]]; then
+        display_error "tg_msg() was called but there was no token!"
+        return 1
+    fi
+
+    if [[ -z ${CHAT_ID} ]]; then
+        display_error "tg_msg() was called but there was no chat ID!"
+        return 1
+    fi
+
+    BOTURL="https://api.telegram.org/bot$BOT_TOKEN/sendMessage"
+    TEXT="$1"
+    until [ $(echo -n "$TEXT" | wc -m) -eq 0 ]; do
+    res=$(curl -s "$BOTURL" -d "chat_id=$CHAT_ID" -d "text=$(urlencode "${TEXT:0:4096}")" -d "parse_mode=MarkdownV2" -d "disable_web_page_preview=true")
+    TEXT="${TEXT:4096}"
+    done
+}
+
+mk_img
 mk_zip
 rm -rf $OUTDIR
 
-git remote add up https://${GH_TOKEN}@github.com/Shekhawat2/whyred_miui_port
-git commit --allow-empty $NEWZIP
-git tag $NEWZIP -m $COMMITHASH
-git push up --tags
+if [ -f $LOCALDIR/$NEWZIP ]; then
+    git remote add up https://${GH_TOKEN}@github.com/shekhawat2/whyred_miui_port.git
+    git commit --allow-empty -m $NEWZIP
+    git tag $NEWZIP -m $COMMITHASH
+    git push up --tags
+
+    NEWURL="https://github.com/shekhawat2/whyred_miui_port/releases/download/$NEWZIP/$NEWZIP"
+    zsize=`du -sk $NEWZIP | awk '{$1*=1024;$1=int($1*1.05);printf $1}'`
+    printf "[$NEWZIP]($NEWURL)" >> $LOCALDIR/info.txt
+    printf "Size: $(bytesToHuman $zsize)" >> $LOCALDIR/info.txt
+    tg_send $(cat $LOCALDIR/info.txt)
+else
+    exit 0
+fi
